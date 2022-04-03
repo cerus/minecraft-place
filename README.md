@@ -13,8 +13,10 @@ The plugin connects to a Reddit websocket that controls the canvas. After authen
 
 ## Installation
 
+**This plugin only works on 1.16.5 - 1.18.2 servers!**
+
 1. Drop the plugin into your plugins folder
-2. Download the [latest experimental maps release](https://github.com/cerus/maps/releases/download/2.0.0-SNAPSHOT-pre2/maps-plugin.jar) and drop it
+2. Download the [latest experimental maps release](https://github.com/cerus/maps/releases/download/2.0.0-SNAPSHOT-pre3/maps-plugin.jar) and drop it
    into your plugins folder
 3. Restart your server
 4. Open `plugins/minecraft-place/config.yml`
