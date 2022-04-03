@@ -3,3 +3,7 @@ reddit:
   password: "my_password"
   clientid: "abcdef01234"
   clientsecret: "abcdef01234"
+
+world:
+  enable: false
+  name: "place"

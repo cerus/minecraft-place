@@ -1,4 +1,4 @@
-package dev.cerus.minecraftplace.canvas;
+package dev.cerus.minecraftplace.reddit.canvas;
 
 import java.awt.Color;
 

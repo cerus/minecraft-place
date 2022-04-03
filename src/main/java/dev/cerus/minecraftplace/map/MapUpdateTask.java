@@ -1,4 +1,4 @@
-package dev.cerus.minecraftplace.task;
+package dev.cerus.minecraftplace.map;
 
 import dev.cerus.maps.api.MapScreen;
 import dev.cerus.maps.api.graphics.ColorCache;
@@ -25,7 +25,7 @@ public class MapUpdateTask implements Runnable {
         // Get screens to update
         final List<MapScreen> screens = MapScreenRegistry.getScreens().stream()
                 .filter(screen -> screen.getWidth() == 16)
-                .filter(screen -> screen.getHeight() == 8)
+                .filter(screen -> screen.getHeight() == 16)
                 .toList();
         if (screens.isEmpty()) {
             return;
@@ -35,7 +35,7 @@ public class MapUpdateTask implements Runnable {
         for (final MapScreen mapScreen : screens) {
             this.plugin.getCanvasMap().forEach((integer, canvas) -> {
                 final int baseX = canvas.getX() + 24;
-                final int baseY = canvas.getY() + 12;
+                final int baseY = canvas.getY() + 24;
 
                 for (int x = 0; x < canvas.getWidth(); x++) {
                     for (int y = 0; y < canvas.getHeight(); y++) {

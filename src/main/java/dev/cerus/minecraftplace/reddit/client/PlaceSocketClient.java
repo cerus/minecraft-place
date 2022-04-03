@@ -1,4 +1,4 @@
-package dev.cerus.minecraftplace.client;
+package dev.cerus.minecraftplace.reddit.client;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

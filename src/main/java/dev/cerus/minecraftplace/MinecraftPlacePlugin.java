@@ -1,27 +1,43 @@
 package dev.cerus.minecraftplace;
 
+import co.aikar.commands.BukkitCommandManager;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.cerus.maps.plugin.map.MapScreenRegistry;
-import dev.cerus.minecraftplace.auth.RedditAuthenticator;
-import dev.cerus.minecraftplace.canvas.Canvas;
-import dev.cerus.minecraftplace.canvas.Palette;
-import dev.cerus.minecraftplace.client.PlaceSocketClient;
-import dev.cerus.minecraftplace.image.CanvasUpdateWorker;
-import dev.cerus.minecraftplace.listener.JoinListener;
-import dev.cerus.minecraftplace.task.MapUpdateTask;
+import dev.cerus.minecraftplace.map.JoinListener;
+import dev.cerus.minecraftplace.map.MapUpdateTask;
+import dev.cerus.minecraftplace.reddit.auth.RedditAuthenticator;
+import dev.cerus.minecraftplace.reddit.canvas.Canvas;
+import dev.cerus.minecraftplace.reddit.canvas.Palette;
+import dev.cerus.minecraftplace.reddit.client.PlaceSocketClient;
+import dev.cerus.minecraftplace.reddit.worker.CanvasUpdateWorker;
+import dev.cerus.minecraftplace.world.BlockColorCache;
+import dev.cerus.minecraftplace.world.BlockUpdateTask;
+import dev.cerus.minecraftplace.world.ChunkListener;
+import dev.cerus.minecraftplace.world.PlayerChunkController;
+import dev.cerus.minecraftplace.world.RPlaceCommand;
+import dev.cerus.minecraftplace.world.RPlaceGenerator;
+import dev.cerus.minecraftplace.world.WorldContext;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
+import org.bukkit.GameRule;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MinecraftPlacePlugin extends JavaPlugin {
 
+    private final Set<Consumer<Palette>> paletteConfigCallbacks = new HashSet<>();
     private final Set<Integer> previousOperations = new HashSet<>();
     private final Map<Integer, Canvas> canvasMap = new HashMap<>();
     private final CanvasUpdateWorker canvasUpdateWorker = new CanvasUpdateWorker();
@@ -57,13 +73,45 @@ public class MinecraftPlacePlugin extends JavaPlugin {
         }
 
         // Register listener
-        this.getServer().getPluginManager().registerEvents(new JoinListener(), this);
+        final PluginManager pluginManager = this.getServer().getPluginManager();
+        pluginManager.registerEvents(new JoinListener(), this);
+
+        // Generate world
+        if (this.getConfig().getBoolean("world.enable")) {
+            final BukkitCommandManager commandManager = new BukkitCommandManager(this);
+            commandManager.registerCommand(new RPlaceCommand());
+
+            this.paletteConfigCallbacks.add(palette ->
+                    this.getServer().getScheduler().runTask(this, () -> {
+                        final String worldName = this.getConfig().getString("world.name");
+
+                        final BlockColorCache blockColorCache = new BlockColorCache(palette);
+                        final WorldContext worldContext = new WorldContext(this, 16 * 8, 4, 16 * 8);
+                        final PlayerChunkController playerChunkController = new PlayerChunkController();
+
+                        final World placeWorld = this.getServer().createWorld(new WorldCreator(worldName)
+                                .environment(World.Environment.NORMAL)
+                                .generateStructures(false)
+                                .generator(new RPlaceGenerator(this, blockColorCache, worldContext))
+                                .type(WorldType.FLAT));
+                        placeWorld.setGameRule(GameRule.DO_MOB_SPAWNING, false);
+                        placeWorld.setGameRule(GameRule.DO_TRADER_SPAWNING, false);
+                        placeWorld.setGameRule(GameRule.DO_PATROL_SPAWNING, false);
+                        placeWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+                        placeWorld.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+                        placeWorld.setDifficulty(Difficulty.PEACEFUL);
+                        placeWorld.setTime(6000);
+
+                        pluginManager.registerEvents(new ChunkListener(worldContext, placeWorld, this, blockColorCache, playerChunkController), this);
+                        Bukkit.getScheduler().runTaskTimerAsynchronously(this, new BlockUpdateTask(this, playerChunkController, blockColorCache), 0, 20);
+                    }));
+        }
 
         // Enable fast graphics and start update task
         Bukkit.getScheduler().runTaskLater(this, () ->
                 MapScreenRegistry.getScreens().stream()
                         .filter(screen -> screen.getWidth() == 16)
-                        .filter(screen -> screen.getHeight() == 8)
+                        .filter(screen -> screen.getHeight() == 16)
                         .forEach(screen -> screen.useFastGraphics(true)), 9 * 20);
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, new MapUpdateTask(this), 10 * 20, 20);
     }
@@ -141,6 +189,9 @@ public class MinecraftPlacePlugin extends JavaPlugin {
                     this.client.subscribeCanvas(10 + canvasId, canvasId);
                     this.previousOperations.add(10 + canvasId);
                 });
+
+                this.paletteConfigCallbacks.forEach(callback -> callback.accept(palette));
+                this.paletteConfigCallbacks.clear();
             }
         });
         this.client.start(token.token());

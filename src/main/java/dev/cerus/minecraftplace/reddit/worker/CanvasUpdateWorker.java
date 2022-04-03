@@ -1,6 +1,6 @@
-package dev.cerus.minecraftplace.image;
+package dev.cerus.minecraftplace.reddit.worker;
 
-import dev.cerus.minecraftplace.canvas.Canvas;
+import dev.cerus.minecraftplace.reddit.canvas.Canvas;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;

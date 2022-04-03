@@ -1,4 +1,4 @@
-package dev.cerus.minecraftplace.auth;
+package dev.cerus.minecraftplace.reddit.auth;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
