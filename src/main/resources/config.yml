@@ -1,0 +1,5 @@
+reddit:
+  username: "my_username"
+  password: "my_password"
+  clientid: "abcdef01234"
+  clientsecret: "abcdef01234"

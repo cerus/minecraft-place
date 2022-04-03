@@ -1,0 +1,8 @@
+name: ${project.artifactId}
+version: ${project.version}
+author: Cerus
+main: dev.cerus.minecraftplace.MinecraftPlacePlugin
+api-version: 1.16
+
+depend:
+  - maps
