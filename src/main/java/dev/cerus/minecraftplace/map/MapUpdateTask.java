@@ -24,8 +24,8 @@ public class MapUpdateTask implements Runnable {
     public void run() {
         // Get screens to update
         final List<MapScreen> screens = MapScreenRegistry.getScreens().stream()
-                .filter(screen -> screen.getWidth() == 16)
-                .filter(screen -> screen.getHeight() == 16)
+                .filter(screen -> screen.getWidth() == this.plugin.getScreenWidth())
+                .filter(screen -> screen.getHeight() == this.plugin.getScreenHeight())
                 .toList();
         if (screens.isEmpty()) {
             return;

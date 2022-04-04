@@ -15,17 +15,18 @@ The plugin connects to a Reddit websocket that controls the canvas. After authen
 
 **This plugin only works on 1.16.5 - 1.18.2 servers!**
 
-1. Drop the plugin into your plugins folder
-2. Download the [latest experimental maps release](https://github.com/cerus/maps/releases/download/2.0.0-SNAPSHOT-pre3/maps-plugin.jar) and drop it
+1. Download the plugin [here](https://github.com/cerus/minecraft-place/releases/download/1.1.0/minecraft-place.jar)
+2. Drop the plugin into your plugins folder
+3. Download the [latest experimental maps release](https://github.com/cerus/maps/releases/download/2.0.0-SNAPSHOT-pre3/maps-plugin.jar) and drop it
    into your plugins folder
-3. Restart your server
-4. Open `plugins/minecraft-place/config.yml`
-5. Edit the credentials and save
+4. Restart your server
+5. Open `plugins/minecraft-place/config.yml`
+6. Edit the credentials and save
     1. See 'How to create a Reddit app' if you don't know how to get a client id and secret
-6. Restart your server again
-7. Build a 16 by 8 rectangle and place item frames ([like this](https://i.imgur.com/kHjODX5.png))
-8. Go to the lower left corner, look into the middle of the lower left itemframe and type `/maps createscreen`
-9. Done! (Optional: Restart your server one last time)
+7. Restart your server again
+8. Build a 16 by 16 rectangle and place item frames ([like this](https://i.imgur.com/D5UAi5a.png))
+9. Go to the lower left corner, look into the middle of the lower left itemframe and type `/maps createscreen`
+10. Done! (Optional: Restart your server one last time)
 
 Please note: The plugin will wait 10 seconds before rendering r/place after startup.
 

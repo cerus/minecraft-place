@@ -29,9 +29,13 @@ import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -74,7 +78,7 @@ public class MinecraftPlacePlugin extends JavaPlugin {
 
         // Register listener
         final PluginManager pluginManager = this.getServer().getPluginManager();
-        pluginManager.registerEvents(new JoinListener(), this);
+        pluginManager.registerEvents(new JoinListener(this), this);
 
         // Generate world
         if (this.getConfig().getBoolean("world.enable")) {
@@ -103,15 +107,33 @@ public class MinecraftPlacePlugin extends JavaPlugin {
                         placeWorld.setTime(6000);
 
                         pluginManager.registerEvents(new ChunkListener(worldContext, placeWorld, this, blockColorCache, playerChunkController), this);
-                        Bukkit.getScheduler().runTaskTimerAsynchronously(this, new BlockUpdateTask(this, playerChunkController, blockColorCache), 0, 20);
+                        Bukkit.getScheduler().runTaskTimerAsynchronously(this, new BlockUpdateTask(this, playerChunkController, blockColorCache), 0, 10);
                     }));
         }
+
+        this.getServer().getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onJoin(final PlayerJoinEvent event) {
+                MinecraftPlacePlugin.this.getServer().getScheduler().runTaskLater(MinecraftPlacePlugin.this, () -> {
+                    event.getPlayer().setAllowFlight(true);
+                    // /execute in minecraft:overworld run tp @s 5.97 11.00 14.02 179.17 22.35
+                    event.getPlayer().teleport(new Location(
+                            event.getPlayer().getWorld(),
+                            6,
+                            11,
+                            14,
+                            180,
+                            22
+                    ));
+                }, 5);
+            }
+        }, this);
 
         // Enable fast graphics and start update task
         Bukkit.getScheduler().runTaskLater(this, () ->
                 MapScreenRegistry.getScreens().stream()
-                        .filter(screen -> screen.getWidth() == 16)
-                        .filter(screen -> screen.getHeight() == 16)
+                        .filter(screen -> screen.getWidth() == this.getScreenWidth())
+                        .filter(screen -> screen.getHeight() == this.getScreenHeight())
                         .forEach(screen -> screen.useFastGraphics(true)), 9 * 20);
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, new MapUpdateTask(this), 10 * 20, 20);
     }
@@ -195,6 +217,22 @@ public class MinecraftPlacePlugin extends JavaPlugin {
             }
         });
         this.client.start(token.token());
+    }
+
+    public int getScreenWidth() {
+        return this.getCanvasMap().values().stream()
+                .mapToInt(value -> value.getX() + value.getWidth())
+                .map(operand -> (int) Math.ceil(operand / 128d))
+                .max()
+                .orElse(0);
+    }
+
+    public int getScreenHeight() {
+        return this.getCanvasMap().values().stream()
+                .mapToInt(value -> value.getY() + value.getHeight())
+                .map(operand -> (int) Math.ceil(operand / 128d))
+                .max()
+                .orElse(0);
     }
 
     public Map<Integer, Canvas> getCanvasMap() {

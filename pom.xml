@@ -6,7 +6,7 @@
 
     <groupId>dev.cerus</groupId>
     <artifactId>minecraft-place</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 
     <properties>
         <maven.compiler.source>16</maven.compiler.source>
