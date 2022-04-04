@@ -1,5 +1,7 @@
 # r/place in Minecraft
 
+> Join the unofficial r/place Minecraft server: place.cerus.dev (1.16.5)
+
 Place is a collaborative project and social experiment hosted on the social networking site Reddit that began on April Fools' Day 2017 and was revived
 again after 5 years on April Fools' Day 2022. The experiment involves an online canvas located at a subreddit called r/place, which registered users
 could edit by changing the color of a single pixel from a 16-color palette. [Wikipedia](https://en.wikipedia.org/wiki/Place_(Reddit))
