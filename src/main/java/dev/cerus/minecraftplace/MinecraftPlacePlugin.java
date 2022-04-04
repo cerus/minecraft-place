@@ -29,13 +29,9 @@ import java.util.function.Consumer;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameRule;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -110,24 +106,6 @@ public class MinecraftPlacePlugin extends JavaPlugin {
                         Bukkit.getScheduler().runTaskTimerAsynchronously(this, new BlockUpdateTask(this, playerChunkController, blockColorCache), 0, 10);
                     }));
         }
-
-        this.getServer().getPluginManager().registerEvents(new Listener() {
-            @EventHandler
-            public void onJoin(final PlayerJoinEvent event) {
-                MinecraftPlacePlugin.this.getServer().getScheduler().runTaskLater(MinecraftPlacePlugin.this, () -> {
-                    event.getPlayer().setAllowFlight(true);
-                    // /execute in minecraft:overworld run tp @s 5.97 11.00 14.02 179.17 22.35
-                    event.getPlayer().teleport(new Location(
-                            event.getPlayer().getWorld(),
-                            6,
-                            11,
-                            14,
-                            180,
-                            22
-                    ));
-                }, 5);
-            }
-        }, this);
 
         // Enable fast graphics and start update task
         Bukkit.getScheduler().runTaskLater(this, () ->
