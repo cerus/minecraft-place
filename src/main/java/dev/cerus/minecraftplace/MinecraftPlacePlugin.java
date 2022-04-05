@@ -7,6 +7,8 @@ import com.google.gson.JsonObject;
 import dev.cerus.maps.plugin.map.MapScreenRegistry;
 import dev.cerus.minecraftplace.map.JoinListener;
 import dev.cerus.minecraftplace.map.MapUpdateTask;
+import dev.cerus.minecraftplace.map.TimelapseAggregatorTask;
+import dev.cerus.minecraftplace.map.TimelapseImageController;
 import dev.cerus.minecraftplace.reddit.auth.RedditAuthenticator;
 import dev.cerus.minecraftplace.reddit.canvas.Canvas;
 import dev.cerus.minecraftplace.reddit.canvas.Palette;
@@ -48,28 +50,9 @@ public class MinecraftPlacePlugin extends JavaPlugin {
         this.saveDefaultConfig();
         this.canvasUpdateWorker.start();
 
-        // Attempt to authenticate ourselves
-        final RedditAuthenticator.Token token;
-        try {
-            token = RedditAuthenticator.authenticate(
-                    this.getConfig().getString("reddit.username"),
-                    this.getConfig().getString("reddit.password"),
-                    this.getConfig().getString("reddit.clientid"),
-                    this.getConfig().getString("reddit.clientsecret")
-            );
-        } catch (final IOException e) {
-            this.getLogger().severe("Failed to authenticate");
-            this.getPluginLoader().disablePlugin(this);
-            return;
-        }
-
-        // Attempt to connect to the Reddit API
-        try {
-            this.startClient(token);
-        } catch (final InterruptedException e) {
-            this.getLogger().severe("Failed to start client");
-            this.getPluginLoader().disablePlugin(this);
-            return;
+        this.initNormal();
+        if (this.getConfig().getBoolean("timelapse.enable")) {
+            this.initTimelapse();
         }
 
         // Register listener
@@ -114,6 +97,47 @@ public class MinecraftPlacePlugin extends JavaPlugin {
                         .filter(screen -> screen.getHeight() == this.getScreenHeight())
                         .forEach(screen -> screen.useFastGraphics(true)), 9 * 20);
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, new MapUpdateTask(this), 10 * 20, 20);
+    }
+
+    private void initTimelapse() {
+        // Load timelapse images
+        final TimelapseImageController timelapseImageController = new TimelapseImageController();
+        try {
+            timelapseImageController.loadFromRPlaceDotSpace();
+        } catch (final IOException ignored) {
+            this.getLogger().severe("Failed to load timelapse images");
+            return;
+        }
+
+        // Run update task
+        final int delay = Math.max(this.getConfig().getInt("timelapse.delay-in-seconds", 1), 1) * 20;
+        this.getServer().getScheduler().runTaskTimerAsynchronously(this,
+                new TimelapseAggregatorTask(this, timelapseImageController, this.canvasUpdateWorker), 11 * 20, delay);
+    }
+
+    private void initNormal() {
+        // Attempt to authenticate ourselves
+        final RedditAuthenticator.Token token;
+        try {
+            token = RedditAuthenticator.authenticate(
+                    this.getConfig().getString("reddit.username"),
+                    this.getConfig().getString("reddit.password"),
+                    this.getConfig().getString("reddit.clientid"),
+                    this.getConfig().getString("reddit.clientsecret")
+            );
+        } catch (final IOException e) {
+            this.getLogger().severe("Failed to authenticate");
+            this.getPluginLoader().disablePlugin(this);
+            return;
+        }
+
+        // Attempt to connect to the Reddit API
+        try {
+            this.startClient(token);
+        } catch (final InterruptedException e) {
+            this.getLogger().severe("Failed to start client");
+            this.getPluginLoader().disablePlugin(this);
+        }
     }
 
     @Override

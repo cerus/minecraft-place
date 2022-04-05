@@ -9,6 +9,29 @@ could edit by changing the color of a single pixel from a 16-color palette. [Wik
 
 ![Gif of r/place in Minecraft](https://cerus.dev/img/rplace_gif.gif)
 
+<hr>
+
+## Update April 5
+
+r/place has officially ended. This plugin will now retire and maybe return if there ever is a third r/place. A timelapse function has been added that
+displays the complete history of the 2022 r/place event. Huge thanks to https://rplace.space/ ([u/risson67](https://risson.space), u/prosto_sanja) for
+the data!
+
+To enable timelapse mode do the following:
+
+1. Download the [latest release](https://github.com/cerus/minecraft-place/releases/download/1.2.0/minecraft-place.jar)
+2. Make sure you have at least one 16 x 16 screen
+3. Put the [new config contents](https://github.com/cerus/minecraft-place/releases/tag/1.2.0) into your `minecraft-place/config.yml` and
+   set `timelapse.enable` to `true`
+4. Restart your server
+
+<details>
+    <summary>Image of the timelapse mode</summary>
+    <img src="https://i.imgur.com/3ByHgcf.png" alt="Image of the timelapse mode">
+</details>
+
+<hr>
+
 ## How it works
 
 The plugin connects to a Reddit websocket that controls the canvas. After authenticating the plugin is able to subscribe to canvas updates.
@@ -17,7 +40,7 @@ The plugin connects to a Reddit websocket that controls the canvas. After authen
 
 **This plugin only works on 1.16.5 - 1.18.2 servers!**
 
-1. Download the plugin [here](https://github.com/cerus/minecraft-place/releases/download/1.1.0/minecraft-place.jar)
+1. Download the plugin [here](https://github.com/cerus/minecraft-place/releases/download/1.2.0/minecraft-place.jar)
 2. Drop the plugin into your plugins folder
 3. Download the [latest experimental maps release](https://github.com/cerus/maps/releases/download/2.0.0-SNAPSHOT-pre3/maps-plugin.jar) and drop it
    into your plugins folder

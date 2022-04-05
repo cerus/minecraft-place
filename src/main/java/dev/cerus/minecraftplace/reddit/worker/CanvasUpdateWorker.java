@@ -46,6 +46,10 @@ public class CanvasUpdateWorker implements Runnable {
         this.queue.add(new QueueItem(canvas, imageUrl));
     }
 
+    public void processDirect(final Canvas canvas, final BufferedImage image) {
+        this.process(canvas, image, true);
+    }
+
     @Override
     public void run() {
         // Process all queued items
@@ -64,18 +68,22 @@ public class CanvasUpdateWorker implements Runnable {
         try {
             // Get the image
             final BufferedImage image = ImageIO.read(new URL(item.imageUrl));
-            for (int x = 0; x < image.getWidth(); x++) {
-                for (int y = 0; y < image.getHeight(); y++) {
-                    // Get pixel and abort if transparent
-                    final Color color = new Color(image.getRGB(x, y), true);
-                    if (color.getAlpha() != 255) {
-                        continue;
-                    }
-                    // Update canvas
-                    item.canvas.setPixel(x, y, color);
-                }
-            }
+            this.process(item.canvas, image, false);
         } catch (final IOException ignored) {
+        }
+    }
+
+    private void process(final Canvas canvas, final BufferedImage image, final boolean force) {
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                // Get pixel and abort if transparent
+                final Color color = new Color(image.getRGB(x, y), true);
+                if (color.getAlpha() != 255) {
+                    continue;
+                }
+                // Update canvas
+                canvas.setPixel(x, y, color, force);
+            }
         }
     }
 

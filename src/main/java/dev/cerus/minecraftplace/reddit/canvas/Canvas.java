@@ -1,5 +1,7 @@
 package dev.cerus.minecraftplace.reddit.canvas;
 
+import dev.cerus.maps.api.MapColor;
+import dev.cerus.maps.api.graphics.ColorCache;
 import java.awt.Color;
 
 /**
@@ -29,9 +31,12 @@ public class Canvas {
      * @param x     The x coordinate
      * @param y     The y coordinate
      * @param color The color
+     * @param force Ignore palette restrictions
      */
-    public void setPixel(final int x, final int y, final Color color) {
-        this.data[this.index(x, y)] = (byte) this.palette.getIndex(color);
+    public void setPixel(final int x, final int y, final Color color, final boolean force) {
+        this.data[this.index(x, y)] = force
+                ? (ColorCache.rgbToMap(color.getRed(), color.getGreen(), color.getBlue()))
+                : ((byte) this.palette.getIndex(color));
     }
 
     /**
@@ -43,7 +48,11 @@ public class Canvas {
      * @return The pixel
      */
     public Color getPixel(final int x, final int y) {
-        return this.palette.getColor(this.data[this.index(x, y)]);
+        final Color paletteColor = this.palette.getColor(this.data[this.index(x, y)]);
+        if (paletteColor == null) {
+            return MapColor.mapColorToRgb(this.data[this.index(x, y)]);
+        }
+        return paletteColor;
     }
 
     /**
