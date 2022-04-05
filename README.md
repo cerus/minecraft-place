@@ -1,6 +1,6 @@
 # r/place in Minecraft
 
-> Join the unofficial r/place Minecraft server: place.cerus.dev (1.16.5)
+> r/place has ended. Thank you for the support! If you have any questions feel free to contact me on Discord: Cerus#5149
 
 Place is a collaborative project and social experiment hosted on the social networking site Reddit that began on April Fools' Day 2017 and was revived
 again after 5 years on April Fools' Day 2022. The experiment involves an online canvas located at a subreddit called r/place, which registered users
