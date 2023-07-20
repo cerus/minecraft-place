@@ -1,36 +1,21 @@
 # r/place in Minecraft
 
-> r/place has ended. Thank you for the support! If you have any questions feel free to contact me on Discord: Cerus#5149
+> **r/place 2023 is live!** https://reddit.com/r/place
 >
-> Unofficial r/place Minecraft server: place.cerus.dev
+> Unofficial server: place.cerus.dev
 
-Place is a collaborative project and social experiment hosted on the social networking site Reddit that began on April Fools' Day 2017 and was revived
-again after 5 years on April Fools' Day 2022. The experiment involves an online canvas located at a subreddit called r/place, which registered users
-could edit by changing the color of a single pixel from a 16-color palette. [Wikipedia](https://en.wikipedia.org/wiki/Place_(Reddit))
-, [Subreddit](https://www.reddit.com/r/place/)
+r/place is a collaborative project and social experiment hosted on the social networking site Reddit. Originally launched on April Fools' Day 2017, it
+has since been repeated again on April Fools' Day 2022, and is taking place for a third time on July 20, 2023. The experiment involves an online
+canvas located at a subreddit called r/place, which registered users could edit by changing the color of a single pixel from a 16-color
+palette. [Wikipedia](https://en.wikipedia.org/wiki/Place_(Reddit)), [Subreddit](https://www.reddit.com/r/place/)
 
-![Gif of r/place in Minecraft](https://cerus.dev/img/rplace_gif.gif)
+![Gif of r/place in Minecraft (2022)](https://cerus.dev/img/rplace_gif.gif)
 
 <hr>
 
-## Update April 5
+## \> Update July 20 2023
 
-r/place has officially ended. This plugin will now retire and maybe return if there ever is a third r/place. A timelapse function has been added that
-displays the complete history of the 2022 r/place event. Huge thanks to https://rplace.space/ ([u/risson67](https://risson.space), u/prosto_sanja) for
-the data!
-
-To enable timelapse mode do the following:
-
-1. Download the [latest release](https://github.com/cerus/minecraft-place/releases/download/1.2.0/minecraft-place.jar)
-2. Make sure you have at least one 16 x 16 screen
-3. Put the [new config contents](https://github.com/cerus/minecraft-place/releases/tag/1.2.0) into your `minecraft-place/config.yml` and
-   set `timelapse.enable` to `true`
-4. Restart your server
-
-<details>
-    <summary>Image of the timelapse mode</summary>
-    <img src="https://i.imgur.com/3ByHgcf.png" alt="Image of the timelapse mode">
-</details>
+r/place has opened again for a third time. This plugin has been updated to support the new "season". Just follow the installation instructions below.
 
 <hr>
 
@@ -40,7 +25,7 @@ The plugin connects to a Reddit websocket that controls the canvas. After authen
 
 ## Installation
 
-**This plugin only works on 1.16.5 - 1.18.2 servers!**
+**This plugin only works on 1.20.1 servers!**
 
 1. Download the plugin [here](https://github.com/cerus/minecraft-place/releases/download/1.2.0/minecraft-place.jar)
 2. Drop the plugin into your plugins folder
@@ -51,7 +36,7 @@ The plugin connects to a Reddit websocket that controls the canvas. After authen
 6. Edit the credentials and save
     1. See 'How to create a Reddit app' if you don't know how to get a client id and secret
 7. Restart your server again
-8. Build a 16 by 16 rectangle and place item frames ([like this](https://i.imgur.com/D5UAi5a.png))
+8. Build a 24 (width) by 16 (height) rectangle and place item frames ([like this](https://i.imgur.com/9jUYFZG.png))
 9. Go to the lower left corner, look into the middle of the lower left itemframe and type `/maps createscreen`
 10. Done! (Optional: Restart your server one last time)
 
