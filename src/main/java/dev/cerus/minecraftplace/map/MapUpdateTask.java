@@ -20,10 +20,12 @@ import org.bukkit.entity.Player;
  */
 public class MapUpdateTask implements Runnable {
 
-    private static final double MAX_DIST = Math.pow(32, 2);
+    private static final double MAX_DIST = Math.pow(48, 2);
 
     private final Map<Integer, Set<UUID>> screenViewerMap = new HashMap<>();
     private final MinecraftPlacePlugin plugin;
+    private int offsetX;
+    private int offsetY;
 
     public MapUpdateTask(final MinecraftPlacePlugin plugin) {
         this.plugin = plugin;
@@ -42,11 +44,26 @@ public class MapUpdateTask implements Runnable {
 
         final Collection<Canvas> canvases = this.plugin.getCanvasMap().values();
 
+        if (this.offsetX == 0) {
+            final int width = this.plugin.getScreenWidth() * 128;
+            final int canvasWidth = canvases.stream()
+                    .mapToInt(c -> c.getX() + c.getWidth())
+                    .max().orElse(0);
+            this.offsetX = (width - canvasWidth) / 2;
+        }
+        if (this.offsetY == 0) {
+            final int height = this.plugin.getScreenHeight() * 128;
+            final int canvasHeight = canvases.stream()
+                    .mapToInt(c -> c.getY() + c.getHeight())
+                    .max().orElse(0);
+            this.offsetY = (height - canvasHeight) / 2;
+        }
+
         // Update screens
         for (final MapScreen screen : screens) {
             for (final Canvas canvas : canvases) {
                 final MapGraphics<?, ?> graphics = screen.getGraphics();
-                graphics.place(canvas.getData(), canvas.getX(), canvas.getY());
+                graphics.place(canvas.getData(), this.offsetY + canvas.getX(), this.offsetY + canvas.getY());
             }
 
             final Collection<Player> receivers = new HashSet<>();

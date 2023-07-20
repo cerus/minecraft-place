@@ -3,13 +3,3 @@ reddit:
   password: "my_password"
   clientid: "abcdef01234"
   clientsecret: "abcdef01234"
-
-timelapse:
-  enable: false # True if a timelapse of r/place should be displayed
-  delay-in-seconds: 1 # Turn this up if you experience lags
-  skip: 8 # The amount of images that should be skipped (1 if zero should be skipped)
-  show-time: true # True if the image timestamp should be drawn in the middle of the screen
-
-world:
-  enable: false
-  name: "place"
