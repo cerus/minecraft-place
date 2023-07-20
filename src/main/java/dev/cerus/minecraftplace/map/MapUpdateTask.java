@@ -89,6 +89,16 @@ public class MapUpdateTask implements Runnable {
                 screen.sendMaps(false, receivers);
             }
         }
+
+        // Remove offline players
+        for (final Integer key : this.screenViewerMap.keySet()) {
+            final Set<UUID> uuids = this.screenViewerMap.get(key);
+            for (final UUID uuid : Set.copyOf(uuids)) {
+                if (Bukkit.getPlayer(uuid) == null) {
+                    uuids.remove(uuid);
+                }
+            }
+        }
     }
 
 }
