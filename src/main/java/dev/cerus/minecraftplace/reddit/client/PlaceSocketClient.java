@@ -22,8 +22,8 @@ public class PlaceSocketClient extends WebSocketClient {
     private static final String SOCKET_URL = "wss://gql-realtime-2.reddit.com/query";
     private static final String MSG_STOP = "{\"id\":\"%d\",\"type\":\"stop\"}";
     private static final String MSG_AUTH = "{\"type\":\"connection_init\",\"payload\":{\"Authorization\":\"Bearer %s\"}}";
-    private static final String MSG_CONFIG = "{\"id\":\"%d\",\"type\":\"start\",\"payload\":{\"variables\":{\"input\":{\"channel\":{\"teamOwner\":\"AFD2022\",\"category\":\"CONFIG\"}}},\"extensions\":{},\"operationName\":\"configuration\",\"query\":\"subscription configuration($input: SubscribeInput!) {\\n  subscribe(input: $input) {\\n    id\\n    ... on BasicMessage {\\n      data {\\n        __typename\\n        ... on ConfigurationMessageData {\\n          colorPalette {\\n            colors {\\n              hex\\n              index\\n              __typename\\n            }\\n            __typename\\n          }\\n          canvasConfigurations {\\n            index\\n            dx\\n            dy\\n            __typename\\n          }\\n          canvasWidth\\n          canvasHeight\\n          __typename\\n        }\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}}";
-    private static final String MSG_SUB_CANVAS = "{\"id\":\"%d\",\"type\":\"start\",\"payload\":{\"variables\":{\"input\":{\"channel\":{\"teamOwner\":\"AFD2022\",\"category\":\"CANVAS\",\"tag\":\"%d\"}}},\"extensions\":{},\"operationName\":\"replace\",\"query\":\"subscription replace($input: SubscribeInput!) {\\n  subscribe(input: $input) {\\n    id\\n    ... on BasicMessage {\\n      data {\\n        __typename\\n        ... on FullFrameMessageData {\\n          __typename\\n          name\\n          timestamp\\n        }\\n        ... on DiffFrameMessageData {\\n          __typename\\n          name\\n          currentTimestamp\\n          previousTimestamp\\n        }\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}}";
+    private static final String MSG_CONFIG = "{\"id\":\"%d\",\"type\":\"start\",\"payload\":{\"variables\":{\"input\":{\"channel\":{\"teamOwner\":\"GARLICBREAD\",\"category\":\"CONFIG\"}}},\"extensions\":{},\"operationName\":\"configuration\",\"query\":\"subscription configuration($input: SubscribeInput!) {\\n  subscribe(input: $input) {\\n    id\\n    ... on BasicMessage {\\n      data {\\n        __typename\\n        ... on ConfigurationMessageData {\\n          colorPalette {\\n            colors {\\n              hex\\n              index\\n              __typename\\n            }\\n            __typename\\n          }\\n          canvasConfigurations {\\n            index\\n            dx\\n            dy\\n            __typename\\n          }\\n          activeZone {\\n            topLeft {\\n              x\\n              y\\n              __typename\\n            }\\n            bottomRight {\\n              x\\n              y\\n              __typename\\n            }\\n            __typename\\n          }\\n          canvasWidth\\n          canvasHeight\\n          adminConfiguration {\\n            maxAllowedCircles\\n            maxUsersPerAdminBan\\n            __typename\\n          }\\n          __typename\\n        }\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}}";
+    private static final String MSG_SUB_CANVAS = "{\"id\":\"%d\",\"type\":\"start\",\"payload\":{\"variables\":{\"input\":{\"channel\":{\"teamOwner\":\"GARLICBREAD\",\"category\":\"CANVAS\",\"tag\":\"%d\"}}},\"extensions\":{},\"operationName\":\"replace\",\"query\":\"subscription replace($input: SubscribeInput!) {\\n  subscribe(input: $input) {\\n    id\\n    ... on BasicMessage {\\n      data {\\n        __typename\\n        ... on FullFrameMessageData {\\n          __typename\\n          name\\n          timestamp\\n        }\\n        ... on DiffFrameMessageData {\\n          __typename\\n          name\\n          currentTimestamp\\n          previousTimestamp\\n        }\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\"}}";
 
     private final Set<Consumer<String>> rawMessageHandlers = new HashSet<>();
     private final Set<Consumer<Message>> messageHandlers = new HashSet<>();
@@ -34,7 +34,7 @@ public class PlaceSocketClient extends WebSocketClient {
     public PlaceSocketClient() {
         super(
                 URI.create(SOCKET_URL),
-                Map.of("Origin", "https://hot-potato.reddit.com") // Required or else we get 401
+                Map.of("Origin", "https://garlic-bread.reddit.com") // Required or else we get 401
         );
     }
 
@@ -145,7 +145,7 @@ public class PlaceSocketClient extends WebSocketClient {
         if (parsedMsg.isJsonObject()) {
             final JsonObject parsedMsgObj = parsedMsg.getAsJsonObject();
             if (parsedMsgObj.has("id")
-                    && parsedMsgObj.has("type")) {
+                && parsedMsgObj.has("type")) {
                 final Message message = new Message(parsedMsgObj);
                 this.messageHandlers.forEach(handler -> handler.accept(message));
             }

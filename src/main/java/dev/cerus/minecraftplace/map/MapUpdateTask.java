@@ -1,11 +1,17 @@
 package dev.cerus.minecraftplace.map;
 
 import dev.cerus.maps.api.MapScreen;
-import dev.cerus.maps.api.graphics.ColorCache;
+import dev.cerus.maps.api.graphics.MapGraphics;
 import dev.cerus.maps.plugin.map.MapScreenRegistry;
 import dev.cerus.minecraftplace.MinecraftPlacePlugin;
-import java.awt.Color;
+import dev.cerus.minecraftplace.reddit.canvas.Canvas;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -14,6 +20,9 @@ import org.bukkit.entity.Player;
  */
 public class MapUpdateTask implements Runnable {
 
+    private static final double MAX_DIST = Math.pow(32, 2);
+
+    private final Map<Integer, Set<UUID>> screenViewerMap = new HashMap<>();
     private final MinecraftPlacePlugin plugin;
 
     public MapUpdateTask(final MinecraftPlacePlugin plugin) {
@@ -31,22 +40,37 @@ public class MapUpdateTask implements Runnable {
             return;
         }
 
-        // Update screens
-        for (final MapScreen mapScreen : screens) {
-            this.plugin.getCanvasMap().forEach((integer, canvas) -> {
-                final int baseX = canvas.getX() + 24;
-                final int baseY = canvas.getY() + 24;
+        final Collection<Canvas> canvases = this.plugin.getCanvasMap().values();
 
-                for (int x = 0; x < canvas.getWidth(); x++) {
-                    for (int y = 0; y < canvas.getHeight(); y++) {
-                        final Color pixel = canvas.getPixel(x, y);
-                        final byte mapColor = ColorCache.rgbToMap(pixel.getRed(), pixel.getGreen(), pixel.getBlue());
-                        mapScreen.getGraphics().setPixel(baseX + x, baseY + y, mapColor);
-                    }
+        // Update screens
+        for (final MapScreen screen : screens) {
+            for (final Canvas canvas : canvases) {
+                final MapGraphics<?, ?> graphics = screen.getGraphics();
+                graphics.place(canvas.getData(), canvas.getX(), canvas.getY());
+            }
+
+            final Collection<Player> receivers = new HashSet<>();
+            for (final Player player : Bukkit.getOnlinePlayers()) {
+                final Set<UUID> viewers = this.screenViewerMap.computeIfAbsent(screen.getId(), $ -> new HashSet<>());
+                final double dist = player.getLocation().distanceSquared(screen.getLocation());
+                if (viewers.contains(player.getUniqueId()) && dist > MAX_DIST) {
+                    // Remove
+                    viewers.remove(player.getUniqueId());
+                    screen.destroyFrames(player);
+                } else if (!viewers.contains(player.getUniqueId()) && dist < MAX_DIST) {
+                    // Add
+                    viewers.add(player.getUniqueId());
+                    screen.spawnFrames(player);
+                    screen.sendMaps(true, player);
                 }
-            });
-            mapScreen.sendMaps(false);
-            mapScreen.sendFrames(Bukkit.getOnlinePlayers().toArray(new Player[0]));
+                if (viewers.contains(player.getUniqueId())) {
+                    // Update
+                    receivers.add(player);
+                }
+            }
+            if (!receivers.isEmpty()) {
+                screen.sendMaps(false, receivers);
+            }
         }
     }
 
